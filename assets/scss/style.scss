@@ -1,0 +1,211 @@
+$tile-size: 100px;
+$grid-size: 4;
+
+$tile-colors: (
+        t2: #18df00,
+        t4: #5a9900,
+        t8: #8c8e00,
+        t16: #d38200,
+        t32: #ae3900,
+        t64: #931269,
+        t128: #0a034c,
+        t256: #0857bf,
+        t512: #4cbfbc,
+        t1024: #bfbcbf,
+        t2048: #d3d02b
+);
+
+@mixin transform($val) {
+  -webkit-transform: scale($val);
+  -moz-transform: scale($val);
+  -ms-transform: scale($val);
+  transform: scale($val);
+}
+
+@mixin animation($property, $duration, $timing, $delay) {
+  -webkit-animation: $property $duration $timing $delay;
+  -moz-animation: $property $duration $timing $delay;
+  animation: $property $duration $timing $delay;
+}
+
+@mixin animation-fill-mode($mode) {
+  -webkit-animation-fill-mode: $mode;
+  -moz-animation-fill-mode: $mode;
+  animation-fill-mode: $mode;
+}
+
+* {
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+  -webkit-user-drag: none;
+}
+
+#playfield {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  width: $grid-size * $tile-size;
+  height: $grid-size * $tile-size;
+  background: gray;
+}
+
+.thing {
+  position: absolute;
+  width: $tile-size;
+  height: $tile-size;
+  text-align: center;
+  font: 48px/96px Arial;
+  background: transparent;
+
+  -webkit-transition: 100ms, ease-in-out;
+  -moz-transition: 100ms, ease-in-out;
+  transition: 100ms, ease-in-out;
+
+  -webkit-transition-property: -webkit-transform;
+  -moz-transition-property: -moz-transform;
+  transition-property: transform;
+}
+
+@for $y from 0 to $grid-size {
+  @for $x from 0 to $grid-size {
+    .t-pos-#{$x}-#{$y} {
+      top: $y * $tile-size;
+      left: $x * $tile-size;
+    }
+  }
+}
+
+@each $key, $color in $tile-colors {
+  .#{$key} {
+    background-color: $color;
+    color: invert($color);
+
+    &:after {
+      content: str_slice('#{$key}', 2);
+    }
+  }
+}
+
+#restart {
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  padding: 7px 17px;
+  border: solid 1px #004F72;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  font: 12px Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: #E5FFFF;
+  background-color: #3BA4C7;
+  background-image: -moz-linear-gradient(top, #3BA4C7 0%, #1982A5 100%);
+  background-image: -webkit-linear-gradient(top, #3BA4C7 0%, #1982A5 100%);
+  background-image: -ms-linear-gradient(top, #3BA4C7 0%, #1982A5 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1982A5', endColorstr='#1982A5', GradientType=0);
+  background-image: linear-gradient(top, #3BA4C7 0%, #1982A5 100%);
+  -webkit-box-shadow: 0 0 2px #bababa, inset 0 0 1px #ffffff;
+  -moz-box-shadow: 0 0 2px #bababa, inset 0 0 1px #ffffff;
+  box-shadow: 0 0 2px #bababa, inset 0 0 1px #ffffff;
+  margin-bottom: 10px;
+}
+
+#score {
+  margin: 10px;
+}
+
+#message {
+  margin: 10px;
+}
+
+@-webkit-keyframes appear {
+  0% {
+    opacity: 0;
+    @include transform(0);
+  }
+
+  100% {
+    opacity: 1;
+    @include transform(1);
+  }
+}
+
+@-moz-keyframes appear {
+  0% {
+    opacity: 0;
+    @include transform(0);
+  }
+
+  100% {
+    opacity: 1;
+    @include transform(1);
+  }
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+    @include transform(0);
+  }
+
+  100% {
+    opacity: 1;
+    @include transform(1);
+  }
+}
+
+.tile-new {
+  @include animation(appear, 200ms, ease, 100ms);
+  @include animation-fill-mode(backwards);
+}
+
+@-webkit-keyframes pop {
+  0% {
+    @include transform(0);
+  }
+
+  50% {
+    @include transform(1.2);
+  }
+
+  100% {
+    @include transform(1);
+  }
+}
+
+@-moz-keyframes pop {
+  0% {
+    @include transform(0);
+  }
+
+  50% {
+    @include transform(1.2);
+  }
+
+  100% {
+    @include transform(1);
+  }
+}
+
+@keyframes pop {
+  0% {
+    @include transform(0);
+  }
+
+  50% {
+    @include transform(1.2);
+  }
+
+  100% {
+    @include transform(1);
+  }
+}
+
+.tile-merged {
+  z-index: 20;
+  @include animation(pop, 200ms, ease, 100ms);
+  @include animation-fill-mode(backwards);
+}
